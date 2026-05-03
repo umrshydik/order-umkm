@@ -22,7 +22,7 @@
 
             <div class="border-b border-dashed border-gray-300 pb-4 mb-4">
                 <p class="text-sm text-gray-500 uppercase tracking-widest font-semibold mb-1">ID Pesanan</p>
-                <p class="text-xl font-bold text-gray-800">#{{ str_pad($order->id, 5, '0', STR_PAD_LEFT) }}</p>
+                <p class="text-xl font-bold text-gray-800">#{{ str_pad($order->queue_number, 5, '0', STR_PAD_LEFT) }}</p>
             </div>
 
             <div class="space-y-3 text-left">
@@ -31,8 +31,8 @@
                     <span class="font-medium text-gray-800">{{ $order->customer_name }}</span>
                 </div>
                 <div class="flex justify-between items-center text-sm">
-                    <span class="text-gray-500">No. Meja</span>
-                    <span class="font-medium text-gray-800">{{ $order->table_number ?: '-' }}</span>
+                    <span class="text-gray-500">Catatan</span>
+                    <span class="font-medium text-gray-800">{{ $order->notes ?: '-' }}</span>
                 </div>
                 <div class="flex justify-between items-center text-sm pt-2">
                     <span class="font-medium text-gray-800">Total Pembayaran</span>

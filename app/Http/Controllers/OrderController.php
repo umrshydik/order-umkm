@@ -32,7 +32,9 @@ class OrderController extends Controller
         $request->validate([
             'customer_name' => 'required|string|max:255',
             'customer_phone' => 'required|string|max:20',
-            'table_number' => 'nullable|string|max:10',
+            'notes' => 'nullable|string|max:255',
+            'payment_method' => 'required|in:take_away,qris',
+            'payment_proof' => 'required_if:payment_method,qris|image|mimes:jpeg,png,jpg|max:2048',
             'cart' => 'required|json', // Client sends cart as JSON string
         ]);
 
@@ -40,6 +42,12 @@ class OrderController extends Controller
 
         if (empty($cartItems)) {
             return back()->with('error', 'Cart is empty');
+        }
+
+        // Handle Image Upload
+        $paymentProofPath = null;
+        if ($request->payment_method === 'qris' && $request->hasFile('payment_proof')) {
+            $paymentProofPath = $request->file('payment_proof')->store('receipts', 'public');
         }
 
         try {
@@ -56,9 +64,11 @@ class OrderController extends Controller
                 'queue_number' => $queueNumber,
                 'customer_name' => $request->customer_name,
                 'customer_phone' => $request->customer_phone,
-                'table_number' => $request->table_number,
+                'notes' => $request->notes,
                 'total_price' => 0, // Will update
                 'status' => 'pending',
+                'payment_method' => $request->payment_method,
+                'payment_proof' => $paymentProofPath,
             ]);
 
             foreach ($cartItems as $item) {

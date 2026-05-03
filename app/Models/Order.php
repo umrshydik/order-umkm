@@ -14,9 +14,11 @@ class Order extends Model
         'queue_number',
         'customer_name',
         'customer_phone',
-        'table_number',
+        'notes',
         'total_price',
         'status',
+        'payment_method',
+        'payment_proof',
     ];
 
     protected $casts = [

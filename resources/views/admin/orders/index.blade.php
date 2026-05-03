@@ -37,10 +37,21 @@
                     <div>
                         <p class="text-sm font-bold text-gray-800">{{ $order->customer_name }}</p>
                         <p class="text-xs text-gray-500"><svg class="w-3 h-3 inline pb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg> {{ $order->customer_phone }}</p>
-                        <p class="text-xs text-gray-500 mt-1">Meja: {{ $order->table_number ?: '-' }}</p>
+                        <p class="text-xs text-gray-500 mt-1">Catatan: {{ $order->notes ?: '-' }}</p>
+                        <p class="text-xs font-semibold mt-2 px-2 py-1 bg-gray-100 rounded inline-block text-gray-600">
+                            Metode: {{ $order->payment_method == 'qris' ? 'QRIS' : 'Take Away' }}
+                        </p>
                     </div>
                     <div class="text-right">
-                        <p class="text-sm font-bold text-red-600">Rp {{ number_format($order->total_price, 0, ',', '.') }}</p>
+                        <p class="text-sm font-bold text-red-600 mb-2">Rp {{ number_format($order->total_price, 0, ',', '.') }}</p>
+                        @if($order->payment_method == 'qris' && $order->payment_proof)
+                            <div class="inline-block text-left mt-2 border rounded p-1 bg-gray-50">
+                                <p class="text-[10px] text-gray-500 mb-1 text-center font-semibold">Bukti Transfer:</p>
+                                <a href="{{ asset('storage/' . $order->payment_proof) }}" target="_blank" class="block">
+                                    <img src="{{ asset('storage/' . $order->payment_proof) }}" alt="Bukti Transfer" class="w-16 h-16 object-cover rounded shadow-sm hover:opacity-80 transition-opacity">
+                                </a>
+                            </div>
+                        @endif
                     </div>
                 </div>
 
