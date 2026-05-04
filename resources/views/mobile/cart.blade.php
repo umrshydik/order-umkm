@@ -10,7 +10,8 @@
 
 @section('content')
     <div class="pt-6 pb-24" x-data="{
-        form: { name: '', phone: '', notes: '', payment_method: 'take_away', payment_proof: null }
+        form: { name: '', phone: '', notes: '', payment_method: 'take_away', payment_proof: null },
+        showQrisModal: false
     }">
         @if(session('error'))
             <div class="mx-4 mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
@@ -98,7 +99,7 @@
                         <!-- QRIS Upload Section -->
                         <div x-show="form.payment_method === 'qris'" x-transition class="mt-4 p-4 bg-gray-50 rounded-xl border border-gray-200 text-center">
                             <p class="text-sm text-gray-600 mb-3">Silakan scan QRIS berikut untuk melakukan pembayaran:</p>
-                            <img src="{{ asset('images/qris-tempe.jpeg') }}" alt="QRIS" class="w-48 h-48 object-cover rounded-lg mx-auto shadow-sm mb-4 border">
+                            <img @click="showQrisModal = true" src="{{ asset('images/qris-tempe.jpeg') }}" alt="QRIS" class="w-48 h-48 object-cover rounded-lg mx-auto shadow-sm mb-4 border cursor-pointer hover:opacity-90 transition-opacity">
                             
                             <div class="text-left">
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Upload Bukti Pay/Transfer *</label>
@@ -119,5 +120,19 @@
                 </form>
             </div>
         </template>
+
+        <!-- Fullscreen QRIS Modal -->
+        <div x-show="showQrisModal" style="display: none;" class="fixed inset-0 z-[100] flex items-center justify-center bg-black bg-opacity-80 p-4" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
+            <div class="relative max-w-sm w-full bg-white rounded-xl overflow-hidden" @click.away="showQrisModal = false">
+                <button @click="showQrisModal = false" type="button" class="absolute top-2 right-2 bg-white text-gray-800 rounded-full p-2 shadow-md hover:bg-gray-100">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+                <img src="{{ asset('images/qris-tempe.jpeg') }}" alt="QRIS Full" class="w-full h-auto">
+                <div class="p-4 text-center">
+                    <p class="font-bold text-gray-800">Scan QRIS ini</p>
+                    <p class="text-sm text-gray-500">untuk menyelesaikan pembayaran</p>
+                </div>
+            </div>
+        </div>
     </div>
 @endsection

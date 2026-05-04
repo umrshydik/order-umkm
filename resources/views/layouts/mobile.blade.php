@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>{{ config('app.name', 'Order UMKM') }}</title>
+    <title>Keripik AA</title>
+    <link rel="icon" type="image/png" href="{{ asset('images/logo1.png') }}">
+
     <!-- Use CDN for Tailwind since composer/npm is not available locally -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Alpine JS for cart state management -->

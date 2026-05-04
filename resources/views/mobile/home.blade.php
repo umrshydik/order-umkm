@@ -1,11 +1,36 @@
 @extends('layouts.mobile')
 
-@section('title', config('app.name', 'Menu UMKM'))
+@section('title')
+    <img src="{{ asset('images/logo2.png') }}" alt="Logo" class="h-8 mr-2">
+@endsection
 
 @section('content')
-    <!-- Banner -->
-    <div class="mt-4 mb-6 rounded-xl overflow-hidden shadow-sm">
-        <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=600&auto=format&fit=crop" alt="Promo Banner" class="w-full h-40 object-cover">
+    <!-- Banner Slider -->
+    <div class="mt-4 mb-6 rounded-xl overflow-hidden shadow-sm relative" x-data="{
+        activeSlide: 0,
+        slides: [
+            '{{ asset('images/banner1.png') }}',
+            '{{ asset('images/banner2.jpeg') }}',
+            '{{ asset('images/banner3.jpeg') }}'
+        ],
+        init() {
+            setInterval(() => {
+                this.activeSlide = this.activeSlide === this.slides.length - 1 ? 0 : this.activeSlide + 1;
+            }, 4000);
+        }
+    }">
+        <div class="relative w-full h-40">
+            <template x-for="(slide, index) in slides" :key="index">
+                <img x-show="activeSlide === index" :src="slide" alt="Promo Banner" class="absolute inset-0 w-full h-40 object-cover" x-transition.opacity.duration.500ms>
+            </template>
+        </div>
+        
+        <!-- Dots Indicators -->
+        <div class="absolute bottom-2 left-0 right-0 flex justify-center space-x-2 z-10">
+            <template x-for="(slide, index) in slides" :key="index">
+                <button @click="activeSlide = index" :class="{'bg-white w-4': activeSlide === index, 'bg-white/50 w-2': activeSlide !== index}" class="h-2 rounded-full transition-all duration-300"></button>
+            </template>
+        </div>
     </div>
 
     <!-- Categories Tab Bar (Horizontal Scroll) -->
@@ -43,10 +68,23 @@
                                     <span class="font-bold text-red-600">Rp <span x-text="formatRupiah({{ $product->price }})"></span></span>
                                     
                                     @if($product->stock > 0)
-                                        <!-- Add button -->
-                                        <button @click="addToCart({{ $product->toJson() }})" class="bg-red-100 text-red-600 hover:bg-red-600 hover:text-white rounded-full p-2 transition-colors">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                                        </button>
+                                        <!-- Add button & Stepper -->
+                                        <template x-if="!cart.find(i => i.id === {{ $product->id }})">
+                                            <button @click="addToCart({{ $product->toJson() }})" class="bg-red-100 text-red-600 hover:bg-red-600 hover:text-white rounded-full p-2 transition-colors">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                            </button>
+                                        </template>
+                                        <template x-if="cart.find(i => i.id === {{ $product->id }})">
+                                            <div class="flex items-center space-x-2 bg-red-50 border border-red-200 rounded-full px-1 py-1">
+                                                <button @click="updateQuantity({{ $product->id }}, 'dec')" class="text-red-500 hover:text-red-700 p-1 bg-white rounded-full shadow-sm">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path></svg>
+                                                </button>
+                                                <span class="text-sm font-semibold w-4 text-center text-red-700" x-text="cart.find(i => i.id === {{ $product->id }}).quantity"></span>
+                                                <button @click="updateQuantity({{ $product->id }}, 'inc')" :class="{'opacity-30 cursor-not-allowed': cart.find(i => i.id === {{ $product->id }}).quantity >= {{ $product->stock }}}" class="text-red-500 hover:text-red-700 p-1 bg-white rounded-full shadow-sm">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                                </button>
+                                            </div>
+                                        </template>
                                     @else
                                         <span class="text-sm font-bold text-gray-400 bg-gray-100 px-3 py-1 rounded-full">Habis</span>
                                     @endif
